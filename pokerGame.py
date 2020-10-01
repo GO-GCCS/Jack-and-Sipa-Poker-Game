@@ -1,33 +1,32 @@
 # The Poker Game
 
 import random
-import sys
 
 """Important Visualisation Functions"""
 
 
-def value(card):
+def value(c):
     if card > 39:
-        card = card - 39
+        c = card - 39
     elif card > 26:
-        card = card - 26
+        c = card - 26
     elif card > 13:
-        card = card - 13
+        c = card - 13
     else:
-        card = card
-    return card
+        c = card
+    return c
 
 
-def suit(card):
+def suit(c):
     if card > 39:
-        card = 4
+        c = 4
     elif card > 26:
-        card = 3
+        c = 3
     elif card > 13:
-        card = 2
+        c = 2
     else:
-        card = 1
-    return card
+        c = 1
+    return c
 
 
 """Variables"""
@@ -42,38 +41,36 @@ passedCards = []
 cardValue = ''
 # discarded cards
 discarded = []
-#money
+# money
 pot = 0
-player1funds = 1000
-player2funds = 1000
-player1bet = 0
-player2bet = 0
-total_player1bet = 0
-total_player2bet = 0
+player1_funds = 1000
+player2_funds = 1000
+player1_bet = 0
+player2_bet = 0
 
 
 """Player Cards shown"""
 
 
-def shown_card(card):
-    if value(card) == 1:
+def shown_card(c):
+    if value(c) == 1:
         return 'A'
-    elif value(card) == 11:
+    elif value(c) == 11:
         return 'J'
-    elif value(card) == 12:
+    elif value(c) == 12:
         return 'Q'
-    elif value(card) == 13:
+    elif value(c) == 13:
         return 'K'
     else:
-        return str(value(card))
+        return str(value(c))
 
 
-def shown_suit(card):
-    if suit(card) == 1:
+def shown_suit(c):
+    if suit(c) == 1:
         return "\U00002665"
-    elif suit(card) == 2:
+    elif suit(c) == 2:
         return "\U00002664"
-    elif suit(card) == 3:
+    elif suit(c) == 3:
         return "\U00002666"
     else:
         return "\U00002667"
@@ -88,41 +85,84 @@ while True:
 
 
 """Betting"""
-player2bet = 0
-p = 0
 
-player1bet = int(input("Please enter the amount you want to bet player1"))
-print("Player1's bet amounts to " + str(player1bet))
 
-while True:
-    if p == 0:
-        player2bet += int(input("Please enter the amount you want to bet player2"))
-        print("Player2's bet amounts to " + str(player2bet))
-        p += 1
-        if player1bet == player2bet:
+def betting():
+    t = 0
+    global player1_bet
+    global player2_bet
+    global player1_funds
+    global player2_funds
+    global pot
+
+    while True:
+
+        if t == 0:
+            p1b = input("Player 1, enter a number to bet or 'q' to quit")
+
+            if p1b == 'q':
+                print("Player 1 quits, Player 2 wins this hand")
+                break
+
+            try:
+                int(p1b) == 0
+            except ValueError:
+                print("Please read the instructions")
+                continue
+
+            if int(p1b) in range(0, player1_funds + 1):
+                if int(p1b) >= 50 or player1_bet >= 50:
+                    if int(p1b) + player1_bet < player2_bet:
+                        print("Please bet as much as or more than Player 2")
+                    else:
+                        player1_bet += int(p1b)
+                        player1_funds -= int(p1b)
+                        t += 1
+                        print("Player 1's bet amounts to " + str(player1_bet))
+                else:
+                    print("Please bet at least 50")
+                    continue
+            elif int(p1b) not in range(0,player1_funds + 1):
+                print("Please enter an amount within your fund limit")
+                continue
+
+        if t == 1:
+
+            p2b = input("Player 2, enter a number to bet or 'q' to quit")
+
+            if p2b == 'q':
+                print("Player 2 quits, Player 1 wins this hand")
+                break
+
+            try:
+                int(p2b) == 0
+            except ValueError:
+                print("Please read the instructions")
+                continue
+
+            if int(p2b) in range(0,player2_funds + 1):
+                if int(p2b) >= 50 or player2_bet >= 50:
+                    if int(p2b) + player2_bet < player1_bet:
+                        print("Please enter as much as or more than Player 1")
+                    else:
+                        player2_bet += int(p2b)
+                        player2_funds -= int(p2b)
+                        t -= 1
+                        print("Player 2's bet amounts to " + str(player2_bet))
+                else:
+                    print("Please bet at least 50")
+                    continue
+            elif int(p2b) not in range(0,player2_funds + 1):
+                print("Please enter an amount within your fund limit")
+                continue
+        if player1_bet == player2_bet:
             break
-    elif p == 1:
-        player1bet += int(input("Please enter the amount you want to bet player1"))
-        print("Player1's bet amounts to " + str(player1bet))
-        p -= 1
-        if player1bet == player2bet:
-            break
+        else:
+            continue
 
-player1funds -= player1bet
-player2funds -= player2bet
+    pot += player1_bet + player2_bet
 
-total_player1bet += player1bet
-total_player2bet += player2bet
-
-pot += player1bet + player2bet
-print('')
-print("The pot is now at " + str(pot) + " chips")
-print('')
-print("Player1's current balance is " + str(player1funds) + "chips")
-print("Player2's current balance is " + str(player2funds) + "chips")
-print('')
-print('')
-print('')
+    print("The pot is " + str(pot))
 
 
 # TURN 1
@@ -178,41 +218,7 @@ print('')
 """TURN 2"""
 
 """Betting"""
-player2bet = 0
-p = 0
 
-player1bet = int(input("Please enter the amount you want to bet player1"))
-print("Player1's bet amounts to " + str(player1bet))
-
-while True:
-    if p == 0:
-        player2bet += int(input("Please enter the amount you want to bet player2"))
-        print("Player2's bet amounts to " + str(player2bet))
-        p += 1
-        if player1bet == player2bet:
-            break
-    elif p == 1:
-        player1bet += int(input("Please enter the amount you want to bet player1"))
-        print("Player1's bet amounts to " + str(player1bet))
-        p -= 1
-        if player1bet == player2bet:
-            break
-
-player1funds -= player1bet
-player2funds -= player2bet
-
-total_player1bet += player1bet
-total_player2bet += player2bet
-
-pot += player1bet + player2bet
-print('')
-print("The pot is now at " + str(pot) + " chips")
-print('')
-print("Player1's current balance is " + str(player1funds) + "chips")
-print("Player2's current balance is " + str(player2funds) + "chips")
-print('')
-print('')
-print('')
 
 # player 1
 print('Player 1, if you want to change one or more cards, write the numbers and then press enter')
@@ -514,4 +520,4 @@ else:
         print("Player 1 is a f***ing loser, he's the worst cock-sucking penguin molester who has ever given me the "
               "displeasure of playing this game")
     else:
-        print("It's a f***ing draw. A draw. How in the the name of GCCS did you manage that?")
+        print("It's a ducking draw. A draw. How in the the name of GCCS did you manage that?")
