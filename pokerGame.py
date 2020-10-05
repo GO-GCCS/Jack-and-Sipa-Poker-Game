@@ -156,7 +156,7 @@ def betting(a, b, c, d, e):
     print("The pot is " + str(e))
 
 
-betting(a, b, c, d, e)
+betting(player1_funds, player2_funds, player1_bet, player2_bet, pot)
 
 # TURN 1
 # your turn
@@ -206,7 +206,7 @@ print('')
 
 """Betting"""
 
-betting(a, b, c, d, e)
+betting(player1_funds, player2_funds, player1_bet, player2_bet, pot)
 
 # player 1
 print('Player 1, if you want to change one or more cards, write the numbers and then press enter')
@@ -301,17 +301,17 @@ print("Player2, your new cards are: " + shown_cards2)
 
 """Betting"""
 
-betting(a, b, c, d, e)
+betting(player1_funds, player2_funds, player1_bet, player2_bet, pot)
 
 """Determining the Winner"""
 
 # straight flush
 
 
-def straight_flush():
+def straight_flush(card1, card2, card3, card4, card5):
     if value(card1) == value(card2) - 1 == value(card3) - 2 == value(card4) - 3 == value(card5) - 4 or value(card1)\
-            == value(card2) - 1 == value(card3) - 2 == value(card4) - 3 == value(card5) + 9:
-        if flush() == card1 and value(card1) not in (11, 12, 13):
+            == value(card1) - 1 == value(card3) - 2 == value(card4) - 3 == value(card5) + 9:
+        if flush(card1, card2, card3, card4, card5) is True and value(card1) not in (11, 12, 13):
             return True
         else:
             return False
@@ -321,10 +321,10 @@ def straight_flush():
 # straight
 
 
-def straight():
+def straight(card1, card2, card3, card4, card5):
     if value(card1) == value(card2) - 1 == value(card3) - 2 == value(card4) - 3 == value(card5) - 4 or value(card1)\
-            == value(card2) - 1 == value(card3) - 2 == value(card4) - 3 == value(card5) + 9:
-        if not flush() and value(card1) not in (11, 12, 13):
+            == value(card1) - 1 == value(card3) - 2 == value(card4) - 3 == value(card5) + 9:
+        if not flush(card1, card2, card3, card4, card5) is True and value(card1) not in (11, 12, 13):
             return True
         else:
             return False
@@ -334,7 +334,7 @@ def straight():
 # flush
 
 
-def flush():
+def flush(card1, card2, card3, card4, card5):
     if suit(card1) == suit(card2) == suit(card3) == suit(card4) == suit(card5):
         return True
     else:
@@ -343,7 +343,7 @@ def flush():
 # 4 of a kind
 
 
-def four_of_a_kind():
+def four_of_a_kind(card1, card2, card3, card4, card5):
     if value(card1) == value(card2) == value(card3) == value(card4) or value(card2) == value(card3)\
             == value(card4) == value(card5):
         return True
@@ -353,7 +353,7 @@ def four_of_a_kind():
 # full house
 
 
-def full_house():
+def full_house(card1, card2, card3, card4, card5):
     if value(card1) == value(card2) == value(card3) and value(card4) == value(card5):
         return True
     elif value(card1) == value(card2) and value(card3) == value(card4) == value(card5):
@@ -364,21 +364,21 @@ def full_house():
 # 3 of a kind
 
 
-def three_of_a_kind():
-    if not four_of_a_kind():
+def three_of_a_kind(card1, card2, card3, card4, card5):
+    if four_of_a_kind(card1, card2, card3, card4, card5) or full_house(card1, card2, card3, card4, card5):
+        return False
+    else:
         if value(card1) == value(card2) == value(card3) or value(card2) == value(card3) == value(card4)\
                 or value(card3) == value(card4) == value(card5):
             return True
         else:
             return False
-    else:
-        return False
 
 # 2 pairs
 
 
-def two_pairs():
-    if not four_of_a_kind() and not three_of_a_kind():
+def two_pairs(card1, card2, card3, card4, card5):
+    if not four_of_a_kind(card1, card2, card3, card4, card5) and not three_of_a_kind(card1, card2, card3, card4, card5):
         if value(card1) == value(card2):
             if value(card3) == value(card4):
                 return True
@@ -394,8 +394,11 @@ def two_pairs():
         return False
 
 # pair
-def pair():
-    if four_of_a_kind() is True or three_of_a_kind() is True or two_pairs() is True:
+
+
+def pair(card1, card2, card3, card4, card5):
+    if four_of_a_kind(card1, card2, card3, card4, card5) or three_of_a_kind(card1, card2, card3, card4, card5)\
+            or two_pairs(card1, card2, card3, card4, card5) is True:
         return False
     else:
         if value(card1) == value(card2):
@@ -409,28 +412,25 @@ def pair():
 
 # Player 1 Score
 
-player1Cards.sort()
-card1 = player1Cards[0]
-card2 = player1Cards[1]
-card3 = player1Cards[2]
-card4 = player1Cards[3]
-card5 = player1Cards[4]
 
-if straight_flush():
+player1Cards.sort()
+
+
+if straight_flush(player1Cards[0], player1Cards[1], player1Cards[2], player1Cards[3], player1Cards[4]):
     player1score = 9
-elif four_of_a_kind():
+elif four_of_a_kind(player1Cards[0], player1Cards[1], player1Cards[2], player1Cards[3], player1Cards[4]):
     player1score = 8
-elif full_house():
+elif full_house(player1Cards[0], player1Cards[1], player1Cards[2], player1Cards[3], player1Cards[4]):
     player1score = 7
-elif flush():
+elif flush(player1Cards[0], player1Cards[1], player1Cards[2], player1Cards[3], player1Cards[4]):
     player1score = 6
-elif straight():
+elif straight(player1Cards[0], player1Cards[1], player1Cards[2], player1Cards[3], player1Cards[4]):
     player1score = 5
-elif three_of_a_kind():
+elif three_of_a_kind(player1Cards[0], player1Cards[1], player1Cards[2], player1Cards[3], player1Cards[4]):
     player1score = 4
-elif two_pairs():
+elif two_pairs(player1Cards[0], player1Cards[1], player1Cards[2], player1Cards[3], player1Cards[4]):
     player1score = 3
-elif pair():
+elif pair(player1Cards[0], player1Cards[1], player1Cards[2], player1Cards[3], player1Cards[4]):
     player1score = 2
 else:
     if value(player1Cards[0]) == 1:
@@ -439,28 +439,23 @@ else:
         player1score = 0
 
 # Player 2 Score
-player2Cards.sort()
-card1 = player2Cards[0]
-card2 = player2Cards[1]
-card3 = player2Cards[2]
-card4 = player2Cards[3]
-card5 = player2Cards[4]
 
-if straight_flush():
+
+if straight_flush(player2Cards[0], player2Cards[1], player2Cards[2], player2Cards[3], player2Cards[4]):
     player2score = 9
-elif four_of_a_kind():
+elif four_of_a_kind(player2Cards[0], player2Cards[1], player2Cards[2], player2Cards[3], player2Cards[4]):
     player2score = 8
-elif full_house():
+elif full_house(player2Cards[0], player2Cards[1], player2Cards[2], player2Cards[3], player2Cards[4]):
     player2score = 7
-elif flush():
+elif flush(player2Cards[0], player2Cards[1], player2Cards[2], player2Cards[3], player2Cards[4]):
     player2score = 6
-elif straight():
+elif straight(player2Cards[0], player2Cards[1], player2Cards[2], player2Cards[3], player2Cards[4]):
     player2score = 5
-elif three_of_a_kind():
+elif three_of_a_kind(player2Cards[0], player2Cards[1], player2Cards[2], player2Cards[3], player2Cards[4]):
     player2score = 4
-elif two_pairs():
+elif two_pairs(player2Cards[0], player2Cards[1], player2Cards[2], player2Cards[3], player2Cards[4]):
     player2score = 3
-elif pair():
+elif pair(player2Cards[0], player2Cards[1], player2Cards[2], player2Cards[3], player2Cards[4]):
     player2score = 2
 else:
     if value(player2Cards[0]) == 1:
